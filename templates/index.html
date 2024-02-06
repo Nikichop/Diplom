@@ -284,7 +284,11 @@
                 method: 'post',
                 data: formData,
                 success: function(response){
-                    $('#result').html(`<strong>Содержание по категории:</strong> <br>${response}`);
+                    var resultHtml = '<strong>Содержание по категории:</strong><br>';
+                    for (var category in response) {
+                        resultHtml += `<h5>${category}:</h5><p>${response[category]}</p>`;
+                    }
+                    $('#result').html(resultHtml);
                 },
                 error: function(xhr, status, error){
                     $('#result').html(`<strong>Ошибка:</strong> ${xhr.responseText}`);

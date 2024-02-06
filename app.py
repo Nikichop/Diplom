@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, jsonify
 import openai
 from gigachat import GigaChat
+from gigachat.models import Chat, Messages, MessagesRole
 import os
 
 app = Flask(__name__)
@@ -8,13 +9,11 @@ app = Flask(__name__)
 
 def categorize_text_with_chatgpt(text, category):
     try:
-        prompt = f"Изложи информацию о категории '{category}' в следующем тексте: '{text}'. Сфокусируйся на выбранной категории и старайся исключать другие"
+        prompt = f"Изложи информацию только о категории '{category}' в следующем тексте, исключая все остальные темы: '{text}'. Сосредоточься исключительно на '{category}', игнорируя другие аспекты."
         response = openai.chat.completions.create(
             messages=[
-                {
-                    "role": "user",
-                    "content": prompt,
-                }
+                {"role": "system", "content": "Вы являетесь ассистентом, который должен строго следовать инструкциям."},
+                {"role": "user", "content": prompt},
             ],
             model="gpt-3.5-turbo",
             temperature=0.8,
@@ -29,9 +28,20 @@ def categorize_text_with_chatgpt(text, category):
 
 def categorize_text_with_gigachat(text, category):
     try:
-        prompt = f"Изложи информацию о категории '{category}' в следующем тексте: '{text}'. Сфокусируйся на выбранной категории и старайся исключать другие"
+        prompt = f"Изложи информацию только о категории '{category}' в следующем тексте, исключая все остальные темы: '{text}'. Сосредоточься исключительно на '{category}', игнорируя другие аспекты."
+        payload = Chat(
+            messages=[
+                Messages(
+                    role=MessagesRole.SYSTEM,
+                    content="Вы являетесь ассистентом, который должен строго следовать инструкциям.",
+                ),
+            ],
+            temperature=0.8,
+        )
+
         with GigaChat(credentials=os.getenv('GIGACHAT_CREDENTIALS'), verify_ssl_certs=False) as giga:
-            response = giga.chat(prompt)
+            payload.messages.append(Messages(role=MessagesRole.USER, content=prompt))
+            response = giga.chat(payload)
             return response.choices[0].message.content
 
     except Exception as e:
@@ -46,17 +56,27 @@ def index():
 @app.route('/process', methods=['POST'])
 def process():
     text = request.form['text']
-    category = request.form['category']
+    categories = request.form['category'].split(',')
     api_choice = request.form['apiChoice']
 
-    if api_choice == 'chatgpt':
-        result = categorize_text_with_chatgpt(text, category)
-    elif api_choice == 'gigachat':
-        result = categorize_text_with_gigachat(text, category)
+    results = {}
 
-    if 'error' in result:
-        return jsonify(result), 500
-    return jsonify(result)
+    for category in categories:
+        category = category.strip()
+        if api_choice == 'chatgpt':
+            result = categorize_text_with_chatgpt(text, category)
+        elif api_choice == 'gigachat':
+            result = categorize_text_with_gigachat(text, category)
+
+        if 'error' in result:
+            results[category] = f'Ошибка: {result["error"]}'
+        else:
+            results[category] = result
+
+    if results:
+        return jsonify(results)
+    else:
+        return jsonify({'error': 'Нет данных для обработки'}), 500
 
 
 if __name__ == '__main__':
