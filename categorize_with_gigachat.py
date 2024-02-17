@@ -14,7 +14,6 @@ def categorize_text_with_gigachat(text, category):
                 ),
             ],
             temperature=0.8,
-            update_interval=0.1,
         )
 
         with GigaChat(credentials=os.getenv('GIGACHAT_CREDENTIALS'), verify_ssl_certs=False) as giga:
