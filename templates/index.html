@@ -1,237 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Text Categorizer</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <style>
-        body {
-        font-size: 18px;
-        }
-        .side-container {
-          float: left;
-          width: 13%;
-          height: auto;
-          padding: 10px;
-          margin: 2% 0 5% 5%;
-          box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
-          border-radius: 30px;
-          background: rgba(255, 255, 255, 0.8);
-          position: fixed;
-          left: 10px;
-          top: 10px;
-        }
-
-        .container {
-          border-radius: 30px;
-          padding: 40px;
-          margin: 5% auto;
-          box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
-          transition: background 0.3s ease;
-          width: 60%;
-          max-width: 1000px;
-        }
-
-        @media (max-width: 1200px) {
-          .side-container {
-            width: 12%;
-            margin-left: 3%;
-          }
-
-          .container {
-            width: 70%;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .side-container {
-            width: 16%;
-            margin-left: 2%;
-          }
-
-          .container {
-            width: 80%;
-          }
-
-          h2 {
-            font-size: 28px;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .side-container {
-            display: none;
-          }
-
-          .container {
-            width: 90%;
-            margin: 10px auto;
-            padding: 20px;
-          }
-
-          h2 {
-            font-size: 22px;
-          }
-
-          textarea, input[type="text"] {
-            font-size: 16px;
-          }
-        }
-
-        .dark-theme .side-container {
-          background: rgba(0, 0, 0, 0.8);
-        }
-
-        .side-container #themeToggle {
-          display: block;
-          margin: auto;
-        }
-
-        .side-container h3 {
-            margin: 0;
-            padding: 10px;
-            font-size: 24px;
-            color: gray;
-            font-family: 'Montserrat', cursive;
-            border-radius: 30px;
-        }
-
-        h2 {
-            margin-bottom: 30px;
-            font-size: 36px;
-            color: gray;
-            font-family: 'Montserrat', cursive;
-        }
-        textarea, input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-            transition: all 0.3s ease;
-            font-family: 'Montserrat', cursive;
-        }
-        textarea:focus, input[type="text"]:focus {
-            border-color: #2193b0;
-            box-shadow: 0 0 8px rgba(33, 147, 176, 0.5);
-        }
-        button {
-            background-color: #2193b0;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-bottom: 15px;
-            font-family: 'Montserrat', cursive;
-        }
-        button:hover {
-            background-color: #27a0cc;
-        }
-
-        #result {
-            margin-top: 20px;
-        }
-
-        body.light-theme {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #6dd5ed, #2193b0);
-            color: white;
-        }
-        .light-theme .container {
-            background: rgba(255, 255, 255, 0.8);
-        }
-
-        body.dark-theme {
-            background: #121212;
-            color: #e0e0e0;
-        }
-        .dark-theme .container {
-            background: rgba(0, 0, 0, 0.8);
-            color: #e0e0e0;
-        }
-        .dark-theme textarea, .dark-theme input[type="text"] {
-            background: #333;
-            color: #fff;
-            border: 1px solid #444;
-        }
-        button:focus {
-        outline: none;
-        }
-
-        form {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-
-        button[type="submit"] {
-            margin-top: 15px;
-            width: 200px;
-        }
-
-        .api-selector {
-        display: block;
-        width: 100%;
-        margin-top: 10px;
-        padding: 5px 10px;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-        background-color: white;
-        color: gray;
-        transition: all 0.3s ease;
-        font-family: 'Montserrat', cursive;
-    }
-
-        .api-selector:focus {
-            border-color: #2193b0;
-            box-shadow: 0 0 8px rgba(33, 147, 176, 0.5);
-        }
-
-        .dark-theme .api-selector {
-            background-color: #333;
-            color: #fff;
-            border: 1px solid #444;
-        }
-
-        .theme-selector, .api-selector {
-            display: block;
-            width: 100%;
-            margin-top: 10px;
-            padding: 5px 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            background-color: white;
-            color: gray;
-            transition: all 0.3s ease;
-            font-family: 'Montserrat', cursive;
-        }
-
-        .theme-selector:focus, .api-selector:focus {
-            border-color: #2193b0;
-            box-shadow: 0 0 8px rgba(33, 147, 176, 0.5);
-        }
-
-        .dark-theme .theme-selector, .dark-theme .api-selector {
-            background-color: #333;
-            color: #fff;
-            border: 1px solid #444;
-        }
-
-        .light-theme #result {
-            color: black;
-        }
-
-        #result {
-            font-family: 'Montserrat', cursive;
-        }
-
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body class="light-theme">
-  <div class="side-container">
+<div class="side-container">
     <h3>Дополнительные опции</h3>
     <select id="themeChoice" name="Theme" class="theme-selector">
         <option value="light-theme">Светлая тема</option>
@@ -241,62 +20,23 @@
         <option value="chatgpt">ChatGPT</option>
         <option value="gigachat">GigaChat</option>
     </select>
+    <div class="file-upload-wrapper">
+        <button type="button" class="btn file-upload-button">Выбрать файлы</button>
+        <input type="file" id="fileInput" accept=".txt" multiple style="display: none;"/>
+    </div>
 </div>
-    <div class="container">
-        <h2 class="text-center">Категоризатор Текста</h2>
-        <form id="textForm">
-            <textarea name="text" placeholder ="Введите ваш текст здесь"></textarea>
-            <input type="text" name="category" placeholder="Категория (например, Спорт)">
+<div class="container">
+    <h2 class="text-center">Категоризатор Текста</h2>
+    <form id="textForm">
+        <textarea name="text" placeholder="Введите ваш текст здесь"></textarea>
+        <input type="text" name="category" placeholder="Категория (например, Спорт)">
 
-            <button type="submit">Отправить</button>
-        </form>
+        <button type="submit">Отправить</button>
+    </form>
 
     <div id="result"></div>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function(){
-        function setTheme(theme) {
-            if (theme === 'dark-theme') {
-                $('body').removeClass('light-theme').addClass('dark-theme');
-            } else {
-                $('body').removeClass('dark-theme').addClass('light-theme');
-            }
-        }
-
-        if (localStorage.getItem('theme')) {
-            setTheme(localStorage.getItem('theme'));
-            $('#themeChoice').val(localStorage.getItem('theme'));
-        }
-
-        $('#themeChoice').change(function(){
-            var selectedTheme = $(this).val();
-            setTheme(selectedTheme);
-            localStorage.setItem('theme', selectedTheme);
-        });
-
-        $('#textForm').on('submit', function(e){
-            e.preventDefault();
-            var formData = $(this).serialize() + '&apiChoice=' + encodeURIComponent($('#apiChoice').val());
-            $('#result').html('');
-            $.ajax({
-                url: '/process',
-                method: 'post',
-                data: formData,
-                success: function(response){
-                    var resultHtml = '<strong>Содержание по категории:</strong><br>';
-                    for (var category in response) {
-                        resultHtml += `<h5>${category}:</h5><p>${response[category]}</p>`;
-                    }
-                    $('#result').html(resultHtml);
-                },
-                error: function(xhr, status, error){
-                    $('#result').html(`<strong>Ошибка:</strong> ${xhr.responseText}`);
-                }
-            });
-        });
-    });
-</script>
-
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

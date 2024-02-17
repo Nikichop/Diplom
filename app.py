@@ -1,51 +1,9 @@
 from flask import Flask, request, render_template, jsonify
-import openai
-from gigachat import GigaChat
-from gigachat.models import Chat, Messages, MessagesRole
-import os
+import time
+from caregorize_with_chatgpt import categorize_text_with_chatgpt
+from categorize_with_gigachat import categorize_text_with_gigachat
 
 app = Flask(__name__)
-
-
-def categorize_text_with_chatgpt(text, category):
-    try:
-        prompt = f"Изложи информацию только о категории '{category}' в следующем тексте, исключая все остальные темы: '{text}'. Сосредоточься исключительно на '{category}', игнорируя другие аспекты."
-        response = openai.chat.completions.create(
-            messages=[
-                {"role": "system", "content": "Вы являетесь ассистентом, который должен строго следовать инструкциям."},
-                {"role": "user", "content": prompt},
-            ],
-            model="gpt-3.5-turbo",
-            temperature=0.8,
-        )
-
-        categorized_text = response.choices[0].message.content
-        return categorized_text
-
-    except Exception as e:
-        return {'error': str(e)}
-
-
-def categorize_text_with_gigachat(text, category):
-    try:
-        prompt = f"Изложи информацию только о категории '{category}' в следующем тексте, исключая все остальные темы: '{text}'. Сосредоточься исключительно на '{category}', игнорируя другие аспекты."
-        payload = Chat(
-            messages=[
-                Messages(
-                    role=MessagesRole.SYSTEM,
-                    content="Вы являетесь ассистентом, который должен строго следовать инструкциям.",
-                ),
-            ],
-            temperature=0.8,
-        )
-
-        with GigaChat(credentials=os.getenv('GIGACHAT_CREDENTIALS'), verify_ssl_certs=False) as giga:
-            payload.messages.append(Messages(role=MessagesRole.USER, content=prompt))
-            response = giga.chat(payload)
-            return response.choices[0].message.content
-
-    except Exception as e:
-        return {'error': str(e)}
 
 
 @app.route('/')
@@ -61,6 +19,7 @@ def process():
 
     results = {}
 
+    start_time = time.time()
     for category in categories:
         category = category.strip()
         if api_choice == 'chatgpt':
@@ -73,7 +32,10 @@ def process():
         else:
             results[category] = result
 
+    end_time = time.time()
+
     if results:
+        print(f'Общее время выполнения: {end_time - start_time} секунд')
         return jsonify(results)
     else:
         return jsonify({'error': 'Нет данных для обработки'}), 500

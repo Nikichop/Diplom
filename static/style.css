@@ -1,0 +1,254 @@
+
+body {
+    font-size: 18px;
+}
+
+.side-container {
+    float: left;
+    width: 13%;
+    height: auto;
+    padding: 10px;
+    margin: 2% 0 5% 5%;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.8);
+    position: fixed;
+    left: 10px;
+    top: 10px;
+}
+
+.container {
+    border-radius: 30px;
+    padding: 40px;
+    margin: 5% auto;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease;
+    width: 60%;
+    max-width: 1000px;
+}
+
+@media (max-width: 1200px) {
+    .side-container {
+        width: 12%;
+        margin-left: 3%;
+    }
+
+    .container {
+        width: 70%;
+    }
+}
+
+@media (max-width: 768px) {
+    .side-container {
+        width: 16%;
+        margin-left: 2%;
+    }
+
+    .container {
+        width: 80%;
+    }
+
+    h2 {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .side-container {
+        display: none;
+    }
+
+    .container {
+        width: 90%;
+        margin: 10px auto;
+        padding: 20px;
+    }
+
+    h2 {
+        font-size: 22px;
+    }
+
+    textarea, input[type="text"] {
+        font-size: 16px;
+    }
+}
+
+.dark-theme .side-container {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.side-container #themeToggle {
+    display: block;
+    margin: auto;
+}
+
+.side-container h3 {
+    margin: 0;
+    padding: 10px;
+    font-size: 24px;
+    color: gray;
+    font-family: 'Montserrat', cursive;
+    border-radius: 30px;
+}
+
+h2 {
+    margin-bottom: 30px;
+    font-size: 36px;
+    color: gray;
+    font-family: 'Montserrat', cursive;
+}
+
+textarea, input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', cursive;
+}
+
+textarea:focus, input[type="text"]:focus {
+    border-color: #2193b0;
+    box-shadow: 0 0 8px rgba(33, 147, 176, 0.5);
+}
+
+button {
+    background-color: #2193b0;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 15px;
+    font-family: 'Montserrat', cursive;
+}
+
+button:hover {
+    background-color: #27a0cc;
+}
+
+#result {
+    margin-top: 20px;
+}
+
+body.light-theme {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #6dd5ed, #2193b0);
+    color: white;
+}
+
+.light-theme .container {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+body.dark-theme {
+    background: #121212;
+    color: #e0e0e0;
+}
+
+.dark-theme .container {
+    background: rgba(0, 0, 0, 0.8);
+    color: #e0e0e0;
+}
+
+.dark-theme textarea, .dark-theme input[type="text"] {
+    background: #333;
+    color: #fff;
+    border: 1px solid #444;
+}
+
+button:focus {
+    outline: none;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+button[type="submit"] {
+    margin-top: 15px;
+    width: 315px;
+}
+
+
+.file-upload-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.file-upload-button {
+    background-color: #2193b0;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family: 'Montserrat', cursive;
+    margin-top: 20px;
+}
+
+.file-upload-button:hover {
+    background-color: #27a0cc;
+}
+
+
+.api-selector {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: white;
+    color: gray;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', cursive;
+}
+
+.api-selector:focus {
+    border-color: #2193b0;
+    box-shadow: 0 0 8px rgba(33, 147, 176, 0.5);
+}
+
+.dark-theme .api-selector {
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #444;
+}
+
+.theme-selector, .api-selector {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: white;
+    color: gray;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', cursive;
+}
+
+.theme-selector:focus, .api-selector:focus {
+    border-color: #2193b0;
+    box-shadow: 0 0 8px rgba(33, 147, 176, 0.5);
+}
+
+.dark-theme .theme-selector, .dark-theme .api-selector {
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #444;
+}
+
+.light-theme #result {
+    color: black;
+}
+
+#result {
+    font-family: 'Montserrat', cursive;
+}
