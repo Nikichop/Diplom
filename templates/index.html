@@ -12,7 +12,7 @@
 <body class="light-theme">
 <div class="side-container">
     <h3>Дополнительные опции</h3>
-    <select id="themeChoice" name="Theme" class="theme-selector">
+    <select id="themeChoice" name="Theme" class="api-selector">
         <option value="light-theme">Светлая тема</option>
         <option value="dark-theme">Темная тема</option>
     </select>
@@ -20,10 +20,15 @@
         <option value="chatgpt">ChatGPT</option>
         <option value="gigachat">GigaChat</option>
     </select>
+    <select id="responseFormat" name="responseFormat" class="api-selector">
+        <option value="text">Текст</option>
+        <option value="json">JSON</option>
+    </select>
     <div class="file-upload-wrapper">
-        <button type="button" class="btn file-upload-button">Выбрать файлы</button>
+        <button type="button" class="btn file-upload-button">Выбрать файлы с данными</button>
         <input type="file" id="fileInput" accept=".txt" multiple style="display: none;"/>
     </div>
+    <button type="button" id="saveButton" class="btn">Сохранить полученные данные</button>
 </div>
 <div class="container">
     <h2 class="text-center">Категоризатор Текста</h2>

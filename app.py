@@ -16,6 +16,7 @@ def process():
     text = request.form['text']
     categories = request.form['category'].split(',')
     api_choice = request.form['apiChoice']
+    response_format = request.form.get('responseFormat', 'text')  # Добавленный параметр для выбора формата ответа
 
     results = {}
 
@@ -36,7 +37,15 @@ def process():
 
     if results:
         print(f'Общее время выполнения: {end_time - start_time} секунд')
-        return jsonify(results)
+        if response_format == 'json':
+            return jsonify({
+                "information": [
+                    {"category": key, "text": value}
+                    for key, value in results.items()
+                ]
+            })
+        else:
+            return jsonify(results)
     else:
         return jsonify({'error': 'Нет данных для обработки'}), 500
 

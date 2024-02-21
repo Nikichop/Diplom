@@ -221,30 +221,6 @@ button[type="submit"] {
     border: 1px solid #444;
 }
 
-.theme-selector, .api-selector {
-    display: block;
-    width: 100%;
-    margin-top: 10px;
-    padding: 5px 10px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    background-color: white;
-    color: gray;
-    transition: all 0.3s ease;
-    font-family: 'Montserrat', cursive;
-}
-
-.theme-selector:focus, .api-selector:focus {
-    border-color: #2193b0;
-    box-shadow: 0 0 8px rgba(33, 147, 176, 0.5);
-}
-
-.dark-theme .theme-selector, .dark-theme .api-selector {
-    background-color: #333;
-    color: #fff;
-    border: 1px solid #444;
-}
-
 .light-theme #result {
     color: black;
 }
