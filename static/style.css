@@ -17,6 +17,19 @@ body {
     top: 10px;
 }
 
+.db-connection-container {
+    width: 13%; /* Идентично ширине бокового контейнера */
+    padding: 10px;
+    margin: 5% 0 5% 5%; /* Отступ сверху увеличен, чтобы обеспечить пространство между контейнерами */
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.8);
+    position: fixed;
+    left: 10px;
+    top: 350px; /* Значение нужно скорректировать в зависимости от высоты бокового контейнера */
+}
+
+
 .container {
     border-radius: 30px;
     padding: 40px;
@@ -33,6 +46,11 @@ body {
         margin-left: 3%;
     }
 
+    .db-connection-container {
+        width: 12%;
+        margin-left: 3%;
+    }
+
     .container {
         width: 70%;
     }
@@ -40,6 +58,11 @@ body {
 
 @media (max-width: 768px) {
     .side-container {
+        width: 16%;
+        margin-left: 2%;
+    }
+
+    .db-connection-container {
         width: 16%;
         margin-left: 2%;
     }
@@ -55,6 +78,10 @@ body {
 
 @media (max-width: 480px) {
     .side-container {
+        display: none;
+    }
+
+    .db-connection-container {
         display: none;
     }
 
@@ -77,6 +104,11 @@ body {
     background: rgba(0, 0, 0, 0.8);
 }
 
+.dark-theme .db-connection-container {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+
 .side-container #themeToggle {
     display: block;
     margin: auto;
@@ -90,6 +122,38 @@ body {
     font-family: 'Montserrat', cursive;
     border-radius: 30px;
 }
+
+.db-connection-container h3 {
+    margin: 0;
+    padding: 10px;
+    font-size: 24px;
+    color: gray;
+    font-family: 'Montserrat', cursive;
+    border-radius: 30px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', cursive;
+}
+
+.dark-theme .form-control {
+    background-color: #333; /* Фоновый цвет поля в темной теме */
+    color: #fff; /* Цвет текста в темной теме */
+    border: 1px solid #444; /* Цвет границы в темной теме */
+}
+
+
+.form-control:focus {
+    border-color: #2193b0;
+    box-shadow: 0 0 8px rgba(33, 147, 176, 0.5);
+}
+
 
 h2 {
     margin-bottom: 30px;
@@ -227,4 +291,17 @@ button[type="submit"] {
 
 #result {
     font-family: 'Montserrat', cursive;
+}
+
+.toggle-button {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.collapsed {
+    height: 100px; /* Увеличиваем высоту, чтобы заголовок и кнопка оставались видимы */
+    overflow: hidden; /* Скрываем остальное содержимое */
 }

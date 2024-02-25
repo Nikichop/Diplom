@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, jsonify
 import time
 from caregorize_with_chatgpt import categorize_text_with_chatgpt
 from categorize_with_gigachat import categorize_text_with_gigachat
+from database_connect import insert_into_database
 
 app = Flask(__name__)
 
@@ -44,6 +45,21 @@ def process():
                     for key, value in results.items()
                 ]
             })
+        elif response_format == 'sql':
+            # Здесь предполагается, что параметры подключения передаются через запрос
+            db_params = {
+                'host': request.form['dbHost'],
+                'port': request.form['dbPort'],
+                'dbname': request.form['dbName'],
+                'user': request.form['dbUser'],
+                'password': request.form['dbPassword'],
+            }
+            data_to_insert = [
+                {"category": key, "text": value}
+                for key, value in results.items()
+            ]
+            insert_into_database(**db_params, data=data_to_insert)
+            return jsonify({'success': 'Данные успешно сохранены в базе данных'})
         else:
             return jsonify(results)
     else:

@@ -11,7 +11,9 @@
 
 <body class="light-theme">
 <div class="side-container">
-    <h3>Дополнительные опции</h3>
+    <h3>Дополнительные опции
+        <button class="toggle-button">-</button>
+    </h3>
     <select id="themeChoice" name="Theme" class="api-selector">
         <option value="light-theme">Светлая тема</option>
         <option value="dark-theme">Темная тема</option>
@@ -20,16 +22,32 @@
         <option value="chatgpt">ChatGPT</option>
         <option value="gigachat">GigaChat</option>
     </select>
+    <!-- Добавление нового пункта в выпадающий список для выбора формата вывода -->
     <select id="responseFormat" name="responseFormat" class="api-selector">
         <option value="text">Текст</option>
         <option value="json">JSON</option>
+        <option value="sql">SQL</option>
     </select>
+
+
     <div class="file-upload-wrapper">
         <button type="button" class="btn file-upload-button">Выбрать файлы с данными</button>
         <input type="file" id="fileInput" accept=".txt" multiple style="display: none;"/>
     </div>
     <button type="button" id="saveButton" class="btn">Сохранить полученные данные</button>
 </div>
+
+<div class="db-connection-container">
+    <h3>Подключиться к БД PostgreSQL
+        <button class="toggle-button">-</button>
+    </h3>
+    <input type="text" id="dbHost" name="dbHost" placeholder="Хост" class="form-control">
+    <input type="text" id="dbPort" name="dbPort" placeholder="Порт" class="form-control">
+    <input type="text" id="dbName" name="dbName" placeholder="Имя базы данных" class="form-control">
+    <input type="text" id="dbUser" name="dbUser" placeholder="Логин" class="form-control">
+    <input type="password" id="dbPassword" name="dbPassword" placeholder="Пароль" class="form-control">
+</div>
+
 <div class="container">
     <h2 class="text-center">Категоризатор Текста</h2>
     <form id="textForm">
