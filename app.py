@@ -46,7 +46,6 @@ def process():
                 ]
             })
         elif response_format == 'sql':
-            # Здесь предполагается, что параметры подключения передаются через запрос
             db_params = {
                 'host': request.form['dbHost'],
                 'port': request.form['dbPort'],
@@ -59,7 +58,12 @@ def process():
                 for key, value in results.items()
             ]
             insert_into_database(**db_params, data=data_to_insert)
-            return jsonify({'success': 'Данные успешно сохранены в базе данных'})
+            # Сохраняем информацию об успешном сохранении в базе данных вместе с результатами
+            return jsonify({
+                'success': 'Данные успешно сохранены в базе данных',
+                'results': results
+            })
+
         else:
             return jsonify(results)
     else:

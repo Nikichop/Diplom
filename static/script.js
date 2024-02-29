@@ -61,8 +61,13 @@ $(document).ready(function () {
                     // Если ответ в формате JSON с информацией
                     $('#result').text(JSON.stringify(response, null, 2));
                 } else if (typeof response === 'object' && response.success) {
-                    // Обработка успешного сохранения данных в базе данных
-                    $('#result').html(`<strong>Успех:</strong> ${response.success}`);
+                    // Handle successful SQL migration
+                    var resultHtml = `<strong>Успех:</strong> ${response.success}<br><br>`;
+                    resultHtml += '<strong>Результат:</strong><br><br>';
+                    for (var category in response.results) {
+                        resultHtml += `<h5>${category}:</h5><p>${response.results[category]}</p>`;
+                    }
+                    $('#result').html(resultHtml);
                 } else {
                     // Обработка текстового ответа или ошибки
                     var resultHtml = '<strong>Содержание по категории:</strong><br>';
