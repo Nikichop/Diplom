@@ -15,6 +15,11 @@ $(document).ready(function () {
         }
     });
 
+    $('#temperatureRange').on('input', function () {
+        $('#temperatureValue').text($(this).val());
+    });
+
+
     function setTheme(theme) {
         if (theme === 'dark-theme') {
             $('body').removeClass('light-theme').addClass('dark-theme');
@@ -39,6 +44,7 @@ $(document).ready(function () {
         // Собираем данные из формы, включая выбранные параметры API и формат ответа
         var formData = $(this).serialize() + '&apiChoice=' + encodeURIComponent($('#apiChoice').val());
         formData += '&responseFormat=' + encodeURIComponent($('#responseFormat').val());
+        formData += '&temperature=' + encodeURIComponent($('#temperatureRange').val());
 
         // Добавляем данные о подключении к базе данных из новых полей ввода
         formData += '&dbHost=' + encodeURIComponent($('#dbHost').val());
@@ -122,16 +128,16 @@ $(document).ready(function () {
     });
 
     $('#saveButton').on('click', function () {
-        var resultText = $('#result').text(); // Получаем текстовое содержимое результата
-        var blob = new Blob([resultText], {type: 'text/plain;charset=utf-8'}); // Создаем Blob из текста
-        var url = URL.createObjectURL(blob); // Создаем URL для Blob
-        var a = document.createElement('a'); // Создаем элемент ссылки
-        a.href = url; // Устанавливаем URL в качестве адреса ссылки
-        a.download = 'result.txt'; // Устанавливаем имя файла для скачивания
-        document.body.appendChild(a); // Добавляем ссылку в документ
-        a.click(); // Имитируем клик по ссылке для начала скачивания
-        document.body.removeChild(a); // Удаляем ссылку из документа
-        URL.revokeObjectURL(url); // Освобождаем URL
+        var resultText = $('#result').text();
+        var blob = new Blob([resultText], {type: 'text/plain;charset=utf-8'});
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'result.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     });
     if (localStorage.getItem('dbHost')) $('#dbHost').val(localStorage.getItem('dbHost'));
     if (localStorage.getItem('dbPort')) $('#dbPort').val(localStorage.getItem('dbPort'));

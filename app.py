@@ -17,7 +17,8 @@ def process():
     text = request.form['text']
     categories = request.form['category'].split(',')
     api_choice = request.form['apiChoice']
-    response_format = request.form.get('responseFormat', 'text')  # Добавленный параметр для выбора формата ответа
+    response_format = request.form.get('responseFormat', 'text')
+    temperature = float(request.form.get('temperature', 0))
 
     results = {}
 
@@ -25,14 +26,16 @@ def process():
     for category in categories:
         category = category.strip()
         if api_choice == 'chatgpt':
-            result = categorize_text_with_chatgpt(text, category)
+            result = categorize_text_with_chatgpt(text, category, temperature=temperature)
         elif api_choice == 'gigachat':
-            result = categorize_text_with_gigachat(text, category)
+            result = categorize_text_with_gigachat(text, category, temperature=temperature)
 
         if 'error' in result:
             results[category] = f'Ошибка: {result["error"]}'
         else:
-            results[category] = result
+            pattern = category + ": "
+            cleaned_text = result.replace(pattern, '')
+            results[category] = cleaned_text
 
     end_time = time.time()
 
@@ -57,7 +60,7 @@ def process():
                 {"category": key, "text": value}
                 for key, value in results.items()
             ]
-            insert_into_database(**db_params, data=data_to_insert)
+            insert_into_database(**db_params, request_text=text, prompt_parameters='', data=data_to_insert)
             # Сохраняем информацию об успешном сохранении в базе данных вместе с результатами
             return jsonify({
                 'success': 'Данные успешно сохранены в базе данных',

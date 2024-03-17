@@ -3,9 +3,9 @@ from gigachat.models import Chat, Messages, MessagesRole
 import os
 
 
-def categorize_text_with_gigachat(text, category):
+def categorize_text_with_gigachat(text, category, temperature=0):
     try:
-        prompt = f"Изложи информацию только о категории '{category}' в следующем тексте, исключая все остальные темы: '{text}'. Сосредоточься исключительно на '{category}', игнорируя другие аспекты."
+        prompt = f"Изложи информацию только о параметре '{category}' в следующем тексте, исключая все остальные темы: '{text}'. Сосредоточься исключительно на '{category}', игнорируя другие темы. Излагай информацию, по формату, так, как указывают в досье на пациента/преступника. Формат ответа должен выглядеть следующим образом: {category}: информация только о {category}"
         payload = Chat(
             messages=[
                 Messages(
@@ -13,7 +13,7 @@ def categorize_text_with_gigachat(text, category):
                     content="Вы являетесь ассистентом, который должен строго следовать инструкциям.",
                 ),
             ],
-            temperature=0.8,
+            temperature=temperature,
         )
 
         with GigaChat(credentials=os.getenv('GIGACHAT_CREDENTIALS'), verify_ssl_certs=False) as giga:
