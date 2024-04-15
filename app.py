@@ -1,10 +1,16 @@
+import os
 from flask import Flask, request, render_template, jsonify
 import time
-from caregorize_with_chatgpt import categorize_text_with_chatgpt
+from categorize_with_chatgpt import categorize_text_with_chatgpt
 from categorize_with_gigachat import categorize_text_with_gigachat
-from database_connect import insert_into_database
+from database_connect import save_data, close_connection, connect_to_db
+from generate_sql_queries import generate_sql_queries
+from dotenv import load_dotenv
 
 app = Flask(__name__)
+app.config['JSON_AS_ASCII'] = False
+
+load_dotenv('config.env')
 
 
 @app.route('/')
@@ -16,9 +22,13 @@ def index():
 def process():
     text = request.form['text']
     categories = request.form['category'].split(',')
+    categories = [category.strip() for category in categories if category.strip()]
+
     api_choice = request.form['apiChoice']
     response_format = request.form.get('responseFormat', 'text')
-    temperature = float(request.form.get('temperature', 0))
+    max_tokens = int(request.form.get('max_tokens', 0))
+    model_choice = request.form.get('modelChoice')
+    api_key = request.form.get('apiKey')
 
     results = {}
 
@@ -26,9 +36,9 @@ def process():
     for category in categories:
         category = category.strip()
         if api_choice == 'chatgpt':
-            result = categorize_text_with_chatgpt(text, category, temperature=temperature)
+            result = categorize_text_with_chatgpt(api_key, text, category, model_choice, max_tokens)
         elif api_choice == 'gigachat':
-            result = categorize_text_with_gigachat(text, category, temperature=temperature)
+            result = categorize_text_with_gigachat(api_key, text, category, model_choice, max_tokens)
 
         if 'error' in result:
             results[category] = f'Ошибка: {result["error"]}'
@@ -38,39 +48,30 @@ def process():
             results[category] = cleaned_text
 
     end_time = time.time()
+    print(f'Общее время выполнения: {end_time - start_time} секунд')
 
     if results:
-        print(f'Общее время выполнения: {end_time - start_time} секунд')
+        conn = connect_to_db(os.getenv('DB_HOST'), os.getenv('DB_PORT'), os.getenv('DB_NAME'), os.getenv('DB_USER'),
+                             os.getenv('DB_PASSWORD'))
+        save_data(conn, text, results)
+        close_connection(conn)
         if response_format == 'json':
             return jsonify({
+                "request_text": text,
                 "information": [
                     {"category": key, "text": value}
                     for key, value in results.items()
                 ]
             })
         elif response_format == 'sql':
-            db_params = {
-                'host': request.form['dbHost'],
-                'port': request.form['dbPort'],
-                'dbname': request.form['dbName'],
-                'user': request.form['dbUser'],
-                'password': request.form['dbPassword'],
-            }
-            data_to_insert = [
-                {"category": key, "text": value}
-                for key, value in results.items()
-            ]
-            insert_into_database(**db_params, request_text=text, prompt_parameters='', data=data_to_insert)
-            # Сохраняем информацию об успешном сохранении в базе данных вместе с результатами
+            sql_queries = generate_sql_queries(text, results)
             return jsonify({
-                'success': 'Данные успешно сохранены в базе данных',
-                'results': results
+                'sql_queries': sql_queries
             })
-
         else:
             return jsonify(results)
     else:
-        return jsonify({'error': 'Нет данных для обработки'}), 500
+        return jsonify({'error': 'Возникла непредвиденная ошибка'}), 500
 
 
 if __name__ == '__main__':

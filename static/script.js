@@ -1,22 +1,30 @@
 $(document).ready(function () {
 
     $('.toggle-button').click(function () {
-        // Находим ближайший контейнер к кнопке
-        var container = $(this).closest('.side-container, .db-connection-container');
+        var container = $(this).closest('.side-container');
 
-        // Переключаем класс для сворачивания/разворачивания
-        container.toggleClass('collapsed');
-
-        // Изменяем текст кнопки в зависимости от состояния контейнера
+        // Переключаем текст кнопки
         if (container.hasClass('collapsed')) {
-            $(this).text('+');
-        } else {
             $(this).text('-');
+            container.height(10).removeClass('collapsed');
+            container.animate({
+                height: 730
+            }, 700);
+        } else {
+            $(this).text('+');
+            var fullHeight = container.prop('scrollHeight');
+            container.height(fullHeight).addClass('collapsed');
+            setTimeout(function () {
+                if (container.hasClass('collapsed')) {
+                    container.height(0);
+                }
+            }, 700);
         }
     });
 
-    $('#temperatureRange').on('input', function () {
-        $('#temperatureValue').text($(this).val());
+
+    $('#maxTokensRange').on('input', function () {
+        $('#maxTokensValue').text($(this).val());
     });
 
 
@@ -39,62 +47,78 @@ $(document).ready(function () {
         localStorage.setItem('theme', selectedTheme);
     });
 
+    function updateSubmitButtonState() {
+        var isTextFilled = $('textarea[name="text"]').val().trim().length > 0;
+        var isCategoryFilled = $('input[name="category"]').val().trim().length > 0;
+        var isApiKeyFilled = $('#apiKey').val().trim().length > 0;
+        var isFormReady = isTextFilled && isCategoryFilled && isApiKeyFilled;
+        $('button[type="submit"]').prop('disabled', !isFormReady);
+    }
+
+    // Проверяем состояние кнопки при загрузке страницы
+    updateSubmitButtonState();
+
+    // Обновляем состояние кнопки при изменении любого из полей
+    $('textarea[name="text"], input[name="category"], #apiKey').on('input', function () {
+        updateSubmitButtonState();
+    });
+
     $('#textForm').on('submit', function (e) {
-        e.preventDefault(); // Предотвращаем обычную отправку формы
-        // Собираем данные из формы, включая выбранные параметры API и формат ответа
+        e.preventDefault();
         var formData = $(this).serialize() + '&apiChoice=' + encodeURIComponent($('#apiChoice').val());
         formData += '&responseFormat=' + encodeURIComponent($('#responseFormat').val());
-        formData += '&temperature=' + encodeURIComponent($('#temperatureRange').val());
+        formData += '&modelChoice=' + encodeURIComponent($('#modelChoice').val());
+        formData += '&max_tokens=' + encodeURIComponent($('#maxTokensRange').val());
+        formData += '&apiKey=' + encodeURIComponent($('#apiKey').val());
+        console.log('Отправляемые данные формы:', formData);
 
-        // Добавляем данные о подключении к базе данных из новых полей ввода
-        formData += '&dbHost=' + encodeURIComponent($('#dbHost').val());
-        formData += '&dbPort=' + encodeURIComponent($('#dbPort').val());
-        formData += '&dbName=' + encodeURIComponent($('#dbName').val());
-        formData += '&dbUser=' + encodeURIComponent($('#dbUser').val());
-        formData += '&dbPassword=' + encodeURIComponent($('#dbPassword').val());
-
-        // Очищаем предыдущие результаты
         $('#result').html('');
 
-        // Отправляем данные на сервер через AJAX запрос
         $.ajax({
-            url: '/process', // URL обработчика на сервере
-            method: 'POST', // Метод отправки данных
-            data: formData, // Данные формы, включая параметры подключения к БД
+            url: '/process',
+            method: 'POST',
+            data: formData,
             success: function (response) {
-                // Обработка успешного получения ответа
                 if (typeof response === 'object' && response.information) {
-                    // Если ответ в формате JSON с информацией
                     $('#result').text(JSON.stringify(response, null, 2));
-                } else if (typeof response === 'object' && response.success) {
-                    // Handle successful SQL migration
-                    var resultHtml = `<strong>Успех:</strong> ${response.success}<br><br>`;
-                    resultHtml += '<strong>Результат:</strong><br><br>';
-                    for (var category in response.results) {
-                        resultHtml += `<h5>${category}:</h5><p>${response.results[category]}</p>`;
-                    }
+                } else if (typeof response === 'object' && response.sql_queries) {
+                    var resultHtml = `<strong>Итоговый запрос с новыми данными:</strong><br><br>`;
+                    resultHtml += `<pre>${response.sql_queries}</pre>`;
                     $('#result').html(resultHtml);
                 } else {
-                    // Обработка текстового ответа или ошибки
-                    var resultHtml = '<strong>Содержание по категории:</strong><br>';
+                    var resultHtml = '<strong></strong><br>';
                     for (var category in response) {
-                        resultHtml += `<h5>${category}:</h5><p>${response[category]}</p>`;
+                        resultHtml += `<h5>${category}</h5><p>${response[category]}</p>`;
                     }
                     $('#result').html(resultHtml);
                 }
             },
             error: function (xhr, status, error) {
-                // Обработка ошибки выполнения запроса
                 $('#result').html(`<strong>Ошибка:</strong> ${xhr.responseText}`);
             }
         });
-
-        localStorage.setItem('dbHost', $('#dbHost').val());
-        localStorage.setItem('dbPort', $('#dbPort').val());
-        localStorage.setItem('dbName', $('#dbName').val());
-        localStorage.setItem('dbUser', $('#dbUser').val());
-        localStorage.setItem('dbPassword', $('#dbPassword').val());
     });
+
+    var apiModels = {
+        'chatgpt': ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo'],
+        'gigachat': ['GigaChat', 'GigaChat-Plus', 'GigaChat-Pro']
+    };
+
+// Функция для обновления списка моделей
+    function updateModelChoices() {
+        var apiChoice = $('#apiChoice').val();
+        var models = apiModels[apiChoice] || [];
+        var modelChoice = $('#modelChoice');
+        modelChoice.empty(); // Очистить текущие опции
+        models.forEach(function (model) {
+            modelChoice.append(new Option(model, model));
+        });
+
+    }
+
+    updateModelChoices();
+
+    $('#apiChoice').change(updateModelChoices);
 
 
     $('.file-upload-button').on('click', function () {
@@ -107,41 +131,48 @@ $(document).ready(function () {
             return;
         }
 
-        // Создаем массив промисов для чтения всех файлов
         var fileReaders = Array.from(files).map(function (file) {
             return new Promise((resolve) => {
                 var reader = new FileReader();
                 reader.onload = function (e) {
-                    resolve(e.target.result); // Возвращаем содержимое файла как результат промиса
+                    resolve(e.target.result);
                 };
                 reader.readAsText(file);
             });
         });
 
-        // Ожидаем завершения всех операций чтения
         Promise.all(fileReaders).then(contents => {
-            // Собираем все содержимое, разделяя его двойными переносами строк
             var allText = contents.join("\n\n");
-            // Добавляем в текстовое поле
             $('textarea[name="text"]').val(allText);
         });
     });
 
+
     $('#saveButton').on('click', function () {
         var resultText = $('#result').text();
-        var blob = new Blob([resultText], {type: 'text/plain;charset=utf-8'});
+        var responseFormat = $('#responseFormat').val();
+        var fileName, fileType;
+
+        if (responseFormat === 'sql') {
+            resultText = resultText.replace('Итоговый запрос с новыми данными:', '').trim();
+            fileName = 'result.sql';
+            fileType = 'text/plain;charset=utf-8';
+        } else if (responseFormat === 'json') {
+            fileName = 'result.json';
+            fileType = 'application/json;charset=utf-8';
+        } else {
+            fileName = 'result.txt';
+            fileType = 'text/plain;charset=utf-8';
+        }
+
+        var blob = new Blob([resultText], {type: fileType});
         var url = URL.createObjectURL(blob);
         var a = document.createElement('a');
         a.href = url;
-        a.download = 'result.txt';
+        a.download = fileName;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     });
-    if (localStorage.getItem('dbHost')) $('#dbHost').val(localStorage.getItem('dbHost'));
-    if (localStorage.getItem('dbPort')) $('#dbPort').val(localStorage.getItem('dbPort'));
-    if (localStorage.getItem('dbName')) $('#dbName').val(localStorage.getItem('dbName'));
-    if (localStorage.getItem('dbUser')) $('#dbUser').val(localStorage.getItem('dbUser'));
-    if (localStorage.getItem('dbPassword')) $('#dbPassword').val(localStorage.getItem('dbPassword'));
 });

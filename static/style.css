@@ -11,7 +11,7 @@ body {
     color: #fff;
 }
 
-.side-container, .db-connection-container {
+.side-container {
     width: 13%;
     padding: 10px;
     box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
@@ -20,15 +20,11 @@ body {
     position: fixed;
     top: 10px;
     z-index: 1;
-}
-
-.side-container {
     left: 10px;
+    height: 730px;
+    
 }
 
-.db-connection-container {
-    right: 10px;
-}
 
 .container {
     border-radius: 30px;
@@ -37,11 +33,10 @@ body {
     transition: background 0.3s ease;
     max-width: 1000px;
     margin: 0 auto;
-    position: relative;
     z-index: 0;
     overflow-y: auto;
-    max-height: calc(100vh - 20px);
     background: rgba(255, 255, 255, 0.8);
+    height: 730px;
 }
 
 .dark-theme {
@@ -49,7 +44,7 @@ body {
     color: #e0e0e0;
 }
 
-.dark-theme .side-container, .dark-theme .db-connection-container {
+.dark-theme .side-container {
     background: rgba(0, 0, 0, 0.8);
 }
 
@@ -78,7 +73,12 @@ body {
     box-shadow: 0 0 8px rgba(33, 147, 176, 0.5);
 }
 
-h2, .side-container h3, .db-connection-container h3 {
+textarea {
+    height: 390px;
+}
+
+
+h2, .side-container h3 {
     margin: 0;
     padding: 10px;
     font-size: 24px;
@@ -91,6 +91,17 @@ h2 {
     font-size: 36px;
 }
 
+.side-container h4 {
+    margin: 0;
+    padding: 10px;
+    font-size: 20px;
+    color: gray;
+    border-radius: 30px;
+    margin-bottom: 15px;
+    margin-top: 10px;
+}
+
+
 button, .file-upload-button {
     background-color: #2193b0;
     color: #fff;
@@ -100,7 +111,11 @@ button, .file-upload-button {
     cursor: pointer;
     transition: background-color 0.3s ease;
     margin-bottom: 15px;
+    width: 300px;
+    height: 50px;
+    text-align: center;
 }
+
 
 button:hover, .file-upload-button:hover {
     background-color: #27a0cc;
@@ -165,19 +180,45 @@ button[type="submit"] {
     cursor: pointer;
 }
 
+button[type="submit"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+button[type="submit"]:not(:disabled) {
+    opacity: 1;
+    cursor: pointer;
+}
+
+
+pre {
+    font-family: 'Montserrat', cursive;
+    font-size: 18px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background-color: transparent;
+    color: inherit;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.dark-theme pre {
+    color: #e0e0e0;
+}
+
 .collapsed {
     height: 100px;
+    padding-bottom: 100px;
     overflow: hidden;
+    transition: height 0.7s ease, padding 0.7s ease;
 }
 
-.temperature-slider-label, #temperatureValue {
-    white-space: nowrap; /* Предотвратить перенос текста */
-    flex-shrink: 0; /* Не допускать сжатие этих элементов */
+.api-selector, #maxTokensValue {
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
-#temperatureRange {
-    flex-grow: 1; /* Ползунок занимает доступное пространство */
-    margin: 0 10px; /* Горизонтальные отступы */
-    margin-top: 20px; /* Добавляем отступ сверху */
-    margin-bottom: 20px; /* Добавляем отступ снизу */
+#maxTokensRange {
+    flex-grow: 1;
+    margin: 20px 10px;
 }

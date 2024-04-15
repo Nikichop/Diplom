@@ -22,42 +22,34 @@
         <option value="chatgpt">ChatGPT</option>
         <option value="gigachat">GigaChat</option>
     </select>
+    <select id="modelChoice" name="modelChoice" class="api-selector">
+    </select>
     <select id="responseFormat" name="responseFormat" class="api-selector">
         <option value="text">Текст</option>
         <option value="json">JSON</option>
         <option value="sql">SQL</option>
     </select>
-    <div class="temperature-slider-container">
-        <label for="temperatureRange" class="api-selector">Temperature:</label>
-        <input type="range" id="temperatureRange" name="temperature" min="0" max="1" step="0.01" value="0">
-        <span id="temperatureValue" class="temperature-slider-value">0</span>
+    <div class="max-tokens-slider-container">
+        <label for="maxTokensRange" class="api-selector">Количество токенов:</label>
+        <input type="range" id="maxTokensRange" name="max_tokens" min="1" max="4096" step="1" value="2048">
+        <span id="maxTokensValue" class="max-tokens-slider-value">2048</span>
     </div>
-
-
     <div class="file-upload-wrapper">
         <button type="button" class="btn file-upload-button">Выбрать файлы с данными</button>
         <input type="file" id="fileInput" accept=".txt" multiple style="display: none;"/>
     </div>
     <button type="button" id="saveButton" class="btn">Сохранить полученные данные</button>
+    <h4>Ключ от API</h4>
+    <input type="password" id="apiKey" name="apiKey" placeholder="Введите в данное поле ключ от API"
+           class="form-control">
 </div>
 
-<div class="db-connection-container">
-    <h3>Подключиться к БД PostgreSQL
-        <button class="toggle-button">-</button>
-    </h3>
-    <input type="text" id="dbHost" name="dbHost" placeholder="Хост" class="form-control">
-    <input type="text" id="dbPort" name="dbPort" placeholder="Порт" class="form-control">
-    <input type="text" id="dbName" name="dbName" placeholder="Имя базы данных" class="form-control">
-    <input type="text" id="dbUser" name="dbUser" placeholder="Логин" class="form-control">
-    <input type="password" id="dbPassword" name="dbPassword" placeholder="Пароль" class="form-control">
-</div>
 
 <div class="container">
-    <h2 class="text-center">Структуризатор Текста</h2>
-    <form id="textForm">
+    <h2 class="text-center">Главное окно</h2>
+    <form id="textForm" accept-charset="UTF-8">
         <textarea name="text" placeholder="Введите ваш текст здесь"></textarea>
         <input type="text" name="category" placeholder="Категория (например, Спорт)">
-
         <button type="submit">Отправить</button>
     </form>
 
