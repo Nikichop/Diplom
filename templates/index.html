@@ -10,40 +10,70 @@
 </head>
 
 <body class="light-theme">
-<div class="side-container">
-    <h3>Дополнительные опции
-        <button class="toggle-button">-</button>
-    </h3>
+<div class="left-container">
+    <h3>Дополнительные опции</h3>
+    <button class="toggle-button">-</button>
+    <h4>Выбор темы экрана:</h4>
     <select id="themeChoice" name="Theme" class="api-selector">
         <option value="light-theme">Светлая тема</option>
         <option value="dark-theme">Темная тема</option>
     </select>
+    <h4>Выбор используемого API:</h4>
     <select id="apiChoice" name="apiChoice" class="api-selector">
         <option value="chatgpt">ChatGPT</option>
         <option value="gigachat">GigaChat</option>
     </select>
+    <h4>Выбор модели от API:</h4>
     <select id="modelChoice" name="modelChoice" class="api-selector">
     </select>
+    <h4>Выбор формата вывода:</h4>
     <select id="responseFormat" name="responseFormat" class="api-selector">
         <option value="text">Текст</option>
         <option value="json">JSON</option>
         <option value="sql">SQL</option>
     </select>
+</div>
+
+<div class="right-container">
+    <h3>Дополнительные опции</h3>
+    <button class="toggle-button">-</button>
+    <h4>Ключ от API:</h4>
+    <input type="password" id="apiKey" name="apiKey" placeholder="Введите в данное поле ключ от API"
+           class="form-control">
+    <h4></h4>
+    <h4>Выбор количества токенов:</h4>
     <div class="max-tokens-slider-container">
-        <label for="maxTokensRange" class="api-selector">Количество токенов:</label>
         <input type="range" id="maxTokensRange" name="max_tokens" min="1" max="4096" step="1" value="2048">
         <span id="maxTokensValue" class="max-tokens-slider-value">2048</span>
     </div>
+    <h4></h4>
     <div class="file-upload-wrapper">
         <button type="button" class="btn file-upload-button">Выбрать файлы с данными</button>
         <input type="file" id="fileInput" accept=".txt" multiple style="display: none;"/>
     </div>
     <button type="button" id="saveButton" class="btn">Сохранить полученные данные</button>
-    <h4>Ключ от API</h4>
-    <input type="password" id="apiKey" name="apiKey" placeholder="Введите в данное поле ключ от API"
-           class="form-control">
+    <button id="documentationButton" class="btn">Руководство использования</button>
 </div>
 
+<div id="documentationModal" class="modal">
+    <div class="api-selector">
+        <span class="close">&times;</span>
+        <h2>Руководство пользования</h2>
+        <p class="api-selector">Для того, чтобы воспользоваться основной функциональностью приложения, вам
+            потребуется: <br><br> 1. Ввести данные и категории, по которым информация будет структурироваться. <br> 2.
+            Вписать ключ доступа к API в соответствующее поле. <br> 3. Нажать кнопку отправить и ждать ответа. <br><br>
+            В случае возникновения ошибок, система уведомит вас о том, в чем состоит их причина. <br><br> Касательно
+            других возможностей приложения: <br> - В левом окне пользователь может выбрать: тему экрана, API большой
+            языковой
+            модели,
+            ее
+            "версию", и формат вывода информации. <br> - В правом окне доступен ввод ключа доступа к API, выбор
+            количества
+            токенов (базовой единицы текста, с которой работает LLM), кнопки загрузки и сохранения файлов, <br>
+            а также кнопка руководства пользователя, на которую вы ранее нажали.
+        </p>
+    </div>
+</div>
 
 <div class="container">
     <h2 class="text-center">Главное окно</h2>

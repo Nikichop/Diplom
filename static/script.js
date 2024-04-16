@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
     $('.toggle-button').click(function () {
-        var container = $(this).closest('.side-container');
+        var container = $(this).closest('.left-container, .right-container');
 
         // Переключаем текст кнопки
         if (container.hasClass('collapsed')) {
@@ -119,6 +119,24 @@ $(document).ready(function () {
     updateModelChoices();
 
     $('#apiChoice').change(updateModelChoices);
+
+    var modal = document.getElementById('documentationModal');
+    var btn = document.getElementById('documentationButton');
+    var span = document.getElementsByClassName('close')[0];
+
+    btn.onclick = function () {
+        modal.style.display = 'block';
+    }
+
+    span.onclick = function () {
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
 
 
     $('.file-upload-button').on('click', function () {
