@@ -20,8 +20,8 @@
     </select>
     <h4>Выбор используемого API:</h4>
     <select id="apiChoice" name="apiChoice" class="api-selector">
-        <option value="chatgpt">ChatGPT</option>
         <option value="gigachat">GigaChat</option>
+        <option value="chatgpt">ChatGPT</option>
     </select>
     <h4>Выбор модели от API:</h4>
     <select id="modelChoice" name="modelChoice" class="api-selector">
@@ -37,12 +37,8 @@
 <div class="right-container">
     <h3>Дополнительные опции</h3>
     <button class="toggle-button">-</button>
-    <h4>Ключ от API:</h4>
-    <input type="password" id="apiKey" name="apiKey" placeholder="Введите в данное поле ключ от API"
-           class="form-control">
-    <h4></h4>
     <h4>Выбор количества токенов:</h4>
-    <div class="max-tokens-slider-container">
+    <div class="api-selector">
         <input type="range" id="maxTokensRange" name="max_tokens" min="1" max="4096" step="1" value="2048">
         <span id="maxTokensValue" class="max-tokens-slider-value">2048</span>
     </div>
@@ -59,18 +55,19 @@
     <div class="api-selector">
         <span class="close">&times;</span>
         <h2>Руководство пользования</h2>
-        <p class="api-selector">Для того, чтобы воспользоваться основной функциональностью приложения, вам
-            потребуется: <br><br> 1. Ввести данные и категории, по которым информация будет структурироваться. <br> 2.
+        <p class="api-selector">Для того, чтобы структурировать исходные данные, вам
+            потребуется: <br><br> 1. Ввести в текстовые поля, в главном окне, данные и категории, по которым информация
+            будет структурироваться. <br> 2.
             Вписать ключ доступа к API в соответствующее поле. <br> 3. Нажать кнопку отправить и ждать ответа. <br><br>
             В случае возникновения ошибок, система уведомит вас о том, в чем состоит их причина. <br><br> Касательно
             других возможностей приложения: <br> - В левом окне пользователь может выбрать: тему экрана, API большой
             языковой
             модели,
             ее
-            "версию", и формат вывода информации. <br> - В правом окне доступен ввод ключа доступа к API, выбор
-            количества
+            версию, и формат вывода информации. <br> - В правом окне доступен выбор максимального
+            количества, доступных для использования,
             токенов (базовой единицы текста, с которой работает LLM), кнопки загрузки и сохранения файлов, <br>
-            а также кнопка руководства пользователя, на которую вы ранее нажали.
+            а также кнопка руководства пользователя, на которую вы нажали ранее.
         </p>
     </div>
 </div>
@@ -80,6 +77,8 @@
     <form id="textForm" accept-charset="UTF-8">
         <textarea name="text" placeholder="Введите ваш текст здесь"></textarea>
         <input type="text" name="category" placeholder="Категория (например, Спорт)">
+        <input type="password" id="apiKey" name="apiKey" placeholder="Ключ от используемого API"
+               class="form-control">
         <button type="submit">Отправить</button>
     </form>
 

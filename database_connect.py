@@ -13,7 +13,7 @@ def connect_to_db(host, port, dbname, user, password):
     return conn
 
 
-def save_data(conn, request_text, results):
+def save_data(conn, request_text, results, max_tokens, api_choice, model_choice):
     with conn.cursor() as cursor:
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS request (
@@ -32,16 +32,17 @@ def save_data(conn, request_text, results):
             );
         """)
         cursor.execute(sql.SQL("""
-            INSERT INTO request (request_text, prompt_parameters)
-            VALUES (%s, %s)
+            INSERT INTO request (request_text, date, prompt_parameters)
+            VALUES (%s, NOW(), %s)
             RETURNING id;
-        """), (request_text, ''))
+        """), (request_text.replace('\n', ' '),
+               f'max_tokens: {max_tokens}, api_choice: {api_choice}, model_choice: {model_choice}'))
         request_id = cursor.fetchone()[0]
         for category, text in results.items():
             cursor.execute(sql.SQL("""
                 INSERT INTO response (request_id, parameter_name, parameter_value)
                 VALUES (%s, %s, %s);
-            """), (request_id, category, text))
+            """), (request_id, category, text.replace('\n', ' ')))
         conn.commit()
 
 

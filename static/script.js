@@ -8,7 +8,7 @@ $(document).ready(function () {
             $(this).text('-');
             container.height(10).removeClass('collapsed');
             container.animate({
-                height: 730
+                height: 630
             }, 700);
         } else {
             $(this).text('+');
@@ -55,16 +55,17 @@ $(document).ready(function () {
         $('button[type="submit"]').prop('disabled', !isFormReady);
     }
 
-    // Проверяем состояние кнопки при загрузке страницы
     updateSubmitButtonState();
 
-    // Обновляем состояние кнопки при изменении любого из полей
     $('textarea[name="text"], input[name="category"], #apiKey').on('input', function () {
         updateSubmitButtonState();
     });
 
     $('#textForm').on('submit', function (e) {
         e.preventDefault();
+
+        $('button[type="submit"]').prop('disabled', true);
+
         var formData = $(this).serialize() + '&apiChoice=' + encodeURIComponent($('#apiChoice').val());
         formData += '&responseFormat=' + encodeURIComponent($('#responseFormat').val());
         formData += '&modelChoice=' + encodeURIComponent($('#modelChoice').val());
@@ -92,33 +93,53 @@ $(document).ready(function () {
                     }
                     $('#result').html(resultHtml);
                 }
+                $('button[type="submit"]').prop('disabled', false);
             },
             error: function (xhr, status, error) {
                 $('#result').html(`<strong>Ошибка:</strong> ${xhr.responseText}`);
+                $('button[type="submit"]').prop('disabled', false);
             }
         });
     });
 
     var apiModels = {
-        'chatgpt': ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo'],
-        'gigachat': ['GigaChat', 'GigaChat-Plus', 'GigaChat-Pro']
+        'chatgpt': {
+            'gpt-3.5-turbo': {max: 16385, default: 2048},
+            'gpt-4': {max: 8192, default: 2048},
+            'gpt-4-turbo': {max: 128000, default: 2048}
+        },
+        'gigachat': {
+            'GigaChat': {max: 8192, default: 2048},
+            'GigaChat-Plus-preview': {max: 32768, default: 2048},
+            'GigaChat-Pro': {max: 8192, default: 2048}
+        }
     };
 
-// Функция для обновления списка моделей
     function updateModelChoices() {
         var apiChoice = $('#apiChoice').val();
-        var models = apiModels[apiChoice] || [];
+        var models = Object.keys(apiModels[apiChoice]);
         var modelChoice = $('#modelChoice');
-        modelChoice.empty(); // Очистить текущие опции
+        modelChoice.empty();
         models.forEach(function (model) {
             modelChoice.append(new Option(model, model));
         });
+        updateMaxTokens();
+    }
 
+    function updateMaxTokens() {
+        var apiChoice = $('#apiChoice').val();
+        var modelChoice = $('#modelChoice').val();
+        var maxTokens = apiModels[apiChoice][modelChoice].max;
+        var defaultTokens = apiModels[apiChoice][modelChoice].default;
+        $('#maxTokensRange').attr('max', maxTokens);
+        $('#maxTokensValue').text(defaultTokens);
+        $('#maxTokensRange').val(defaultTokens);
     }
 
     updateModelChoices();
 
     $('#apiChoice').change(updateModelChoices);
+    $('#modelChoice').change(updateMaxTokens);
 
     var modal = document.getElementById('documentationModal');
     var btn = document.getElementById('documentationButton');
@@ -181,6 +202,21 @@ $(document).ready(function () {
         } else {
             fileName = 'result.txt';
             fileType = 'text/plain;charset=utf-8';
+
+            var lines = resultText.trim().split('\n');
+            var initialData = lines.slice(0, lines.indexOf('')).join('\n');
+            var outputData = lines.slice(lines.indexOf('') + 1).join('\n');
+            var formattedOutputData = '';
+
+            var categories = outputData.split('\n\n');
+            for (var i = 0; i < categories.length; i++) {
+                var category = categories[i].split('\n');
+                var categoryName = category.shift();
+                var categoryData = category.join('\n');
+                formattedOutputData += `${categoryName}\n${categoryData}\n\n`;
+            }
+
+            resultText = `${initialData}\n${formattedOutputData}`;
         }
 
         var blob = new Blob([resultText], {type: fileType});

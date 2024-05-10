@@ -15,7 +15,12 @@ def categorize_text_with_chatgpt(api_key, text, category, model, max_tokens=100)
         )
 
         categorized_text = response.choices[0].message.content
-        return categorized_text
+        total_tokens_used = response.usage.total_tokens
+        if total_tokens_used > max_tokens:
+            return {
+                'error': f'Недостаточно токенов. Необходимо установить более высокое значение (текущее использование: {total_tokens_used}, лимит: {max_tokens}).'}, 0
+        else:
+            return categorized_text, total_tokens_used
 
 
     except UnicodeEncodeError:
@@ -25,8 +30,8 @@ def categorize_text_with_chatgpt(api_key, text, category, model, max_tokens=100)
 
     except Exception as e:
         if e.response.status_code == 403:
-            return {'error': 'Регион не поддерживается API ChatGPT. Попробуйте воспользоваться VPN'}
+            return {'error': 'Регион не поддерживается API ChatGPT. Попробуйте воспользоваться VPN'}, 0
         elif e.response.status_code == 401:
-            return {'error': 'Неверный API-ключ.'}
+            return {'error': 'Неверный API-ключ.'}, 0
         else:
-            return {'error': str(e)}
+            return {'error': str(e)}, 0

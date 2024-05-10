@@ -36,9 +36,9 @@ def process():
     for category in categories:
         category = category.strip()
         if api_choice == 'chatgpt':
-            result = categorize_text_with_chatgpt(api_key, text, category, model_choice, max_tokens)
+            result, total_tokens_used = categorize_text_with_chatgpt(api_key, text, category, model_choice, max_tokens)
         elif api_choice == 'gigachat':
-            result = categorize_text_with_gigachat(api_key, text, category, model_choice, max_tokens)
+            result, total_tokens_used = categorize_text_with_gigachat(api_key, text, category, model_choice, max_tokens)
 
         if 'error' in result:
             results[category] = f'Ошибка: {result["error"]}'
@@ -53,23 +53,28 @@ def process():
     if results:
         conn = connect_to_db(os.getenv('DB_HOST'), os.getenv('DB_PORT'), os.getenv('DB_NAME'), os.getenv('DB_USER'),
                              os.getenv('DB_PASSWORD'))
-        save_data(conn, text, results)
+        save_data(conn, text, results, total_tokens_used, api_choice, model_choice)
         close_connection(conn)
         if response_format == 'json':
             return jsonify({
                 "request_text": text,
+                "prompt_parameters": f'total_tokens_used: {total_tokens_used}, api_choice: {api_choice}, model_choice: {model_choice}',
                 "information": [
                     {"category": key, "text": value}
                     for key, value in results.items()
                 ]
             })
         elif response_format == 'sql':
-            sql_queries = generate_sql_queries(text, results)
+            sql_queries = generate_sql_queries(text, results, total_tokens_used, api_choice, model_choice)
             return jsonify({
                 'sql_queries': sql_queries
             })
-        else:
-            return jsonify(results)
+        elif response_format == 'text':
+            initial_data = text
+            output_data = "\n\n"
+            for category, data in results.items():
+                output_data += f"\n{category}:\n{data}\n\n"
+            return jsonify({'\nВходные данные \n': initial_data, '\n\nВыходные данные': output_data})
     else:
         return jsonify({'error': 'Возникла непредвиденная ошибка'}), 500
 
