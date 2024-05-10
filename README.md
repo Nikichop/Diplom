@@ -1,5 +1,6 @@
 # StructWithLLM
 
+![Image alt](https://github.com/Nikichop/StructWithLLM/blob/master/StructWithLLM.png)
 ---
 
 ## StructWithLLM - Веб-приложение, написанное на языке программирования Python с использованием фреймворка Flask, предназначенное для структурирования текстовой информации, по одной или нескольким категориям, с помощью API больших языковых моделей (GigaChat, ChatGPT)
